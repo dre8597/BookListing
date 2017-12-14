@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Book Listing</string>
+    <string name="placeholder_title">Goosebumps</string>
+    <string name="placeholder_author">RL Stine</string>
+</resources>
