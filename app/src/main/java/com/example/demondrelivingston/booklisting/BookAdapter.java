@@ -15,8 +15,8 @@ import java.util.List;
 
 public class BookAdapter extends ArrayAdapter<Book> {
 
-    public BookAdapter(Context context, List<Book> books) {
-        super(context, 0, books);
+    public BookAdapter(Context context, List<Book>books) {
+        super(context, 0,books);
     }
 
     // Check if there is an existing list item view (called convertView) that we can reuse,
@@ -41,7 +41,6 @@ public class BookAdapter extends ArrayAdapter<Book> {
         // Return the list item view that is now showing the appropriate data
         return listItemView;
     }
-
 
 }
 

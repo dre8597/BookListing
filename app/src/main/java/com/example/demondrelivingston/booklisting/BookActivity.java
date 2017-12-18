@@ -1,39 +1,31 @@
 package com.example.demondrelivingston.booklisting;
 
 import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BookActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<List<Book>> {
-    private QueryUtils queryUtils;
 
-    /**
-     * Tag for the log messages
-     */
-    private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
     /**
      * URL for book data from the Google Book Api dataset
@@ -49,6 +41,7 @@ public class BookActivity extends AppCompatActivity
 
     private BookAdapter mAdapter;
     private TextView mEmptyStateTextView;
+    private String BOOK_RESULTS = " ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +57,7 @@ public class BookActivity extends AppCompatActivity
                 notStarted.setText(R.string.favorite_title);
             }
 
+            //used to start the search over each time you changed something in the search bar
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 Book_Request_URL = "https://www.googleapis.com/books/v1/volumes?maxResults=20&q=";
@@ -80,11 +74,15 @@ public class BookActivity extends AppCompatActivity
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String searchQuery = search.getText().toString().replaceAll(" ", "+");
-                if (searchQuery != null && !searchQuery.equals("")) {
-                    String searchBook = Book_Request_URL + searchQuery;
-                    BookAsyncTask task = new BookAsyncTask();
-                    task.execute();
+                if (NetworkConnected()) {
+                    String searchQuery = search.getText().toString().replaceAll(" ", "+");
+                    if (searchQuery != null && !searchQuery.equals("")) {
+                        BookAsyncTask task = new BookAsyncTask();
+                        task.execute();
+                    }
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(), "No internet is connected", Toast.LENGTH_LONG);
+                    toast.show();
 
                 }
             }
@@ -92,15 +90,11 @@ public class BookActivity extends AppCompatActivity
 
         //Find a reference to the ListView in the layout
         ListView bookListView = (ListView) findViewById(R.id.list);
-        mEmptyStateTextView = (TextView)
-
-                findViewById(R.id.empty_view);
+        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
         bookListView.setEmptyView(mEmptyStateTextView);
 
         //Create a new adapter that takes an empty list of earthquakes as input
-        mAdapter = new
-
-                BookAdapter(this, new ArrayList<Book>());
+        mAdapter = new BookAdapter(this, new ArrayList<Book>());
 
         //Set the adapter on the ListView so the list can be populated in the user inference
         bookListView.setAdapter(mAdapter);
@@ -208,6 +202,11 @@ public class BookActivity extends AppCompatActivity
 
     }
 
+    private boolean NetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork.isConnectedOrConnecting();
+    }
 
     @Override
     public void onLoaderReset(Loader<List<Book>> loader) {
