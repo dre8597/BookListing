@@ -41,12 +41,16 @@ public class BookActivity extends AppCompatActivity
 
     private BookAdapter mAdapter;
     private TextView mEmptyStateTextView;
-    private String BOOK_RESULTS = " ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Find a reference to the ListView in the layout
+        ListView bookListView = (ListView) findViewById(R.id.list);
+        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
+        bookListView.setEmptyView(mEmptyStateTextView);
 
         //Setting an TextChanged Listener to find books that are being looked up
         final EditText search = (EditText) findViewById(R.id.search_bar);
@@ -88,10 +92,6 @@ public class BookActivity extends AppCompatActivity
             }
         });
 
-        //Find a reference to the ListView in the layout
-        ListView bookListView = (ListView) findViewById(R.id.list);
-        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
-        bookListView.setEmptyView(mEmptyStateTextView);
 
         //Create a new adapter that takes an empty list of earthquakes as input
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
