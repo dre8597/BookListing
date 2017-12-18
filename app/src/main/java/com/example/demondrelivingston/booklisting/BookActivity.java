@@ -52,6 +52,18 @@ public class BookActivity extends AppCompatActivity
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
         bookListView.setEmptyView(mEmptyStateTextView);
 
+        // Get a reference to the ConnectivityManager to check state of network connectivity
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // Get details on the currently active default data network
+        final NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        //Create a new adapter that takes an empty list of earthquakes as input
+        mAdapter = new BookAdapter(this, new ArrayList<Book>());
+
+        //Set the adapter on the ListView so the list can be populated in the user inference
+        bookListView.setAdapter(mAdapter);
+
         //Setting an TextChanged Listener to find books that are being looked up
         final EditText search = (EditText) findViewById(R.id.search_bar);
         search.addTextChangedListener(new TextWatcher() {
@@ -78,7 +90,7 @@ public class BookActivity extends AppCompatActivity
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (NetworkConnected()) {
+                if (networkInfo!=null&&networkInfo.isConnected()) {
                     String searchQuery = search.getText().toString().replaceAll(" ", "+");
                     if (searchQuery != null && !searchQuery.equals("")) {
                         BookAsyncTask task = new BookAsyncTask();
@@ -92,19 +104,6 @@ public class BookActivity extends AppCompatActivity
             }
         });
 
-
-        //Create a new adapter that takes an empty list of earthquakes as input
-        mAdapter = new BookAdapter(this, new ArrayList<Book>());
-
-        //Set the adapter on the ListView so the list can be populated in the user inference
-        bookListView.setAdapter(mAdapter);
-
-        // Get a reference to the ConnectivityManager to check state of network connectivity
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        // Get details on the currently active default data network
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
         // If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected())
@@ -201,13 +200,7 @@ public class BookActivity extends AppCompatActivity
         }
 
     }
-
-    private boolean NetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork.isConnectedOrConnecting();
-    }
-
+    
     @Override
     public void onLoaderReset(Loader<List<Book>> loader) {
         // Loader reset, so we can clear out our existing data.

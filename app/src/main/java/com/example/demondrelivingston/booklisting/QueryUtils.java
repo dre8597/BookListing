@@ -189,10 +189,14 @@ public final class QueryUtils {
 
               //  String author = volumeInfo.getString("authors");
 
-
+                StringBuilder authorArray=new StringBuilder("");
                 // Extract the value for the key called "author"
-                JSONArray authors=volumeInfo.getJSONArray("authors");
-                StringBuilder authorArray = ListOfAuthors(authors);
+                if(volumeInfo.has("authors")) {
+                    JSONArray authors = volumeInfo.getJSONArray("authors");
+                    authorArray= ListOfAuthors(authors);
+                }else {
+                    authorArray.append("");
+                }
 
 
 

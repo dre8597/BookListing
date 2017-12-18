@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * Created by demondrelivingston on 12/14/17.
  */
 
-public class Book implements Parcelable {
+public class Book  {
 
     /**
      * Title of book
@@ -25,21 +25,7 @@ public class Book implements Parcelable {
 
     }
 
-    private Book(Parcel in) {
-        mAuthor = in.readString();
-        mTitle = in.readString();
-    }
-    public static final Creator<Book> CREATOR = new Creator<Book>() {
-        @Override
-        public Book createFromParcel(Parcel in) {
-            return new Book(in);
-        }
 
-        @Override
-        public Book[] newArray(int size) {
-            return new Book[size];
-        }
-    };
     /**
      * Returns the title of the book
      */
@@ -54,14 +40,4 @@ public class Book implements Parcelable {
         return mAuthor;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mTitle);
-        dest.writeString(mAuthor);
-    }
 }
