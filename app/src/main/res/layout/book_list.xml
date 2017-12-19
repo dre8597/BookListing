@@ -11,20 +11,14 @@
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:text="@string/placeholder_title"
-        android:textSize="16sp" />
+        style="@style/labels"
+        android:text="@string/placeholder_title" />
 
     <TextView
         android:id="@+id/author"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        style="@style/labels"
         android:text="@string/placeholder_author"
-        android:textColor="@color/authorName"
-        android:textSize="16sp" />
+        android:textColor="@color/authorName" />
 
 
 </LinearLayout>
