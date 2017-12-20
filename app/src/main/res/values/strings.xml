@@ -7,5 +7,6 @@
     <string name="search">Search book names here</string>
     <string name="search_for_a_title">Search For a title</string>
     <string name="favorite_title">Try looking up your favorite title</string>
+    <string name="internet_gone">Oops something happened to your internet :/</string>
 
 </resources>

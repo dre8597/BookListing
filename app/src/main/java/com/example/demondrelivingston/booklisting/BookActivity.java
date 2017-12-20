@@ -3,6 +3,7 @@ package com.example.demondrelivingston.booklisting;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -53,7 +54,7 @@ public class BookActivity extends AppCompatActivity
         bookListView.setEmptyView(mEmptyStateTextView);
 
         // Get a reference to the ConnectivityManager to check state of network connectivity
-        ConnectivityManager connMgr = (ConnectivityManager)
+        final ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
 
         // Get details on the currently active default data network
@@ -90,20 +91,23 @@ public class BookActivity extends AppCompatActivity
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (networkInfo!=null&&networkInfo.isConnected()) {
+                final NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                if (networkInfo != null && networkInfo.isConnected()) {
                     String searchQuery = search.getText().toString().replaceAll(" ", "+");
                     if (searchQuery != null && !searchQuery.equals("")) {
                         BookAsyncTask task = new BookAsyncTask();
                         task.execute();
                     }
                 } else {
-                    Toast toast = Toast.makeText(getApplicationContext(), "No internet is connected", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Try connecting to internet first", Toast.LENGTH_LONG);
                     toast.show();
-
+                    mEmptyStateTextView.setText(R.string.no_internet_connection);
+                    mEmptyStateTextView.setVisibility(View.VISIBLE);
+                    mAdapter.clear();
+                    search.setText(null);
                 }
             }
         });
-
 
         // If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected())
@@ -200,7 +204,20 @@ public class BookActivity extends AppCompatActivity
         }
 
     }
-    
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        ListView bookListView = (ListView) findViewById(R.id.list);
+        //Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE || newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            int index = bookListView.getFirstVisiblePosition();
+            View view = bookListView.getChildAt(0);
+            int top = (view == null) ? 0 : (view.getTop() - bookListView.getPaddingTop());
+            bookListView.setSelectionFromTop(index, top);
+        }
+    }
+
     @Override
     public void onLoaderReset(Loader<List<Book>> loader) {
         // Loader reset, so we can clear out our existing data.
